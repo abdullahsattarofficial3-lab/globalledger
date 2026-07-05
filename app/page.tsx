@@ -11,7 +11,7 @@ import {
   AlertCircle, Menu, X, TrendingUp, Sparkles,
   ChevronRight, RefreshCw, Eye, EyeOff, 
   CheckCircle, Crown, Settings, User, Key,
-  Save, ArrowLeft
+  Save
 } from 'lucide-react';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, 
@@ -1528,7 +1528,7 @@ function TaxPage({ taxCountry, setTaxCountry, annualIncome, setAnnualIncome, tax
 }
 
 // ============================================================
-// CURRENCY PAGE (Fixed tooltip)
+// CURRENCY PAGE - COMPLETE FIXED
 // ============================================================
 function CurrencyPage({ 
   currencyLogs, showCurrencyForm, setShowCurrencyForm, newCurrencyLog, 
@@ -1556,6 +1556,8 @@ function CurrencyPage({
           </button>
         </div>
       </div>
+
+      {/* Live Rate Cards */}
       {Object.keys(exchangeRates).length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {['PKR', 'EUR', 'GBP', 'INR'].map((curr) => {
@@ -1576,6 +1578,8 @@ function CurrencyPage({
           })}
         </div>
       )}
+
+      {/* Multi-Currency Chart */}
       {multiCurrencyData.length > 1 && (
         <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center mb-4">
@@ -1591,10 +1595,13 @@ function CurrencyPage({
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis dataKey="date" stroke="#9CA3AF" />
               <YAxis stroke="#9CA3AF" domain={['auto', 'auto']} />
-<Tooltip 
-  contentStyle={{ backgroundColor: '#1F2937', borderColor: '#374151' }} 
-  formatter={(value: any) => value?.toFixed(4) ?? '-'}
-/>
+              <Tooltip 
+                contentStyle={{ backgroundColor: '#1F2937', borderColor: '#374151' }} 
+                formatter={(value: any) => {
+                  if (value === undefined || value === null) return '-';
+                  return Number(value).toFixed(4);
+                }}
+              />
               <Legend />
               {pairs.map((pair, i) => (
                 <Line key={pair} type="monotone" dataKey={pair} stroke={COLORS[i % COLORS.length]} strokeWidth={2} dot={false} />
@@ -1603,6 +1610,8 @@ function CurrencyPage({
           </ResponsiveContainer>
         </div>
       )}
+
+      {/* Stats */}
       {currencyLogs.length > 0 && (
         <div className="grid grid-cols-3 gap-4">
           <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
@@ -1619,29 +1628,81 @@ function CurrencyPage({
           </div>
         </div>
       )}
+
+      {/* Form */}
       <AnimatePresence>
         {showCurrencyForm && (
-          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }} 
+            animate={{ height: 'auto', opacity: 1 }} 
+            exit={{ height: 0, opacity: 0 }} 
+            className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
+          >
             <form onSubmit={addCurrencyLog} className="grid grid-cols-1 md:grid-cols-5 gap-3">
-              <input type="number" step="0.01" placeholder="Amount" value={newCurrencyLog.amount} onChange={(e) => setNewCurrencyLog({...newCurrencyLog, amount: e.target.value})} className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700" required />
-              <select value={newCurrencyLog.from_currency} onChange={(e) => setNewCurrencyLog({...newCurrencyLog, from_currency: e.target.value})} className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700">
-                <option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option>
-                <option value="PKR">PKR</option><option value="INR">INR</option><option value="PHP">PHP</option><option value="NGN">NGN</option>
+              <input 
+                type="number" 
+                step="0.01" 
+                placeholder="Amount" 
+                value={newCurrencyLog.amount} 
+                onChange={(e) => setNewCurrencyLog({...newCurrencyLog, amount: e.target.value})} 
+                className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700" 
+                required 
+              />
+              <select 
+                value={newCurrencyLog.from_currency} 
+                onChange={(e) => setNewCurrencyLog({...newCurrencyLog, from_currency: e.target.value})} 
+                className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700"
+              >
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="PKR">PKR</option>
+                <option value="INR">INR</option>
+                <option value="PHP">PHP</option>
+                <option value="NGN">NGN</option>
               </select>
-              <select value={newCurrencyLog.to_currency} onChange={(e) => setNewCurrencyLog({...newCurrencyLog, to_currency: e.target.value})} className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700">
-                <option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option>
-                <option value="PKR">PKR</option><option value="INR">INR</option><option value="PHP">PHP</option><option value="NGN">NGN</option>
+              <select 
+                value={newCurrencyLog.to_currency} 
+                onChange={(e) => setNewCurrencyLog({...newCurrencyLog, to_currency: e.target.value})} 
+                className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700"
+              >
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="PKR">PKR</option>
+                <option value="INR">INR</option>
+                <option value="PHP">PHP</option>
+                <option value="NGN">NGN</option>
               </select>
-              <input type="number" step="0.000001" placeholder="Rate" value={newCurrencyLog.rate} onChange={(e) => setNewCurrencyLog({...newCurrencyLog, rate: e.target.value})} className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700" required />
-              <input type="date" value={newCurrencyLog.date} onChange={(e) => setNewCurrencyLog({...newCurrencyLog, date: e.target.value})} className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700" />
+              <input 
+                type="number" 
+                step="0.000001" 
+                placeholder="Rate" 
+                value={newCurrencyLog.rate} 
+                onChange={(e) => setNewCurrencyLog({...newCurrencyLog, rate: e.target.value})} 
+                className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700" 
+                required 
+              />
+              <input 
+                type="date" 
+                value={newCurrencyLog.date} 
+                onChange={(e) => setNewCurrencyLog({...newCurrencyLog, date: e.target.value})} 
+                className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700" 
+              />
               <div className="md:col-span-5 flex gap-3">
-                <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save</button>
-                <button type="button" onClick={() => setShowCurrencyForm(false)} className="px-6 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300">Cancel</button>
+                <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                  Save
+                </button>
+                <button type="button" onClick={() => setShowCurrencyForm(false)} className="px-6 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300">
+                  Cancel
+                </button>
               </div>
             </form>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Table */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
           <h3 className="font-semibold">📋 Historical Logs</h3>
@@ -1652,14 +1713,31 @@ function CurrencyPage({
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="bg-gray-50 dark:bg-gray-700"><tr><th className="p-4 text-left">Date</th><th className="p-4 text-right">Amount</th><th className="p-4 text-center">From → To</th><th className="p-4 text-right">Rate</th><th className="p-4 text-center">Action</th></tr></thead>
+              <thead className="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                  <th className="p-4 text-left">Date</th>
+                  <th className="p-4 text-right">Amount</th>
+                  <th className="p-4 text-center">From → To</th>
+                  <th className="p-4 text-right">Rate</th>
+                  <th className="p-4 text-center">Action</th>
+                </tr>
+              </thead>
               <tbody>
                 {currencyLogs.slice(0, 50).map((log: any) => (
                   <tr key={log.id} className="border-t dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                    <td className="p-4">{log.date}</td><td className="p-4 text-right font-medium">{Number(log.amount).toFixed(2)}</td>
-                    <td className="p-4 text-center"><span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full text-xs">{log.from_currency} → {log.to_currency}</span></td>
+                    <td className="p-4">{log.date}</td>
+                    <td className="p-4 text-right font-medium">{Number(log.amount).toFixed(2)}</td>
+                    <td className="p-4 text-center">
+                      <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full text-xs">
+                        {log.from_currency} → {log.to_currency}
+                      </span>
+                    </td>
                     <td className="p-4 text-right font-mono">{Number(log.rate).toFixed(4)}</td>
-                    <td className="p-4 text-center"><button onClick={() => deleteCurrencyLog(log.id)} className="text-red-600 hover:bg-red-50 p-1 rounded"><Trash2 size={16} /></button></td>
+                    <td className="p-4 text-center">
+                      <button onClick={() => deleteCurrencyLog(log.id)} className="text-red-600 hover:bg-red-50 p-1 rounded">
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -1667,6 +1745,8 @@ function CurrencyPage({
           </div>
         )}
       </div>
+
+      {/* Live Rates */}
       {Object.keys(exchangeRates).length > 0 && (
         <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
           <h3 className="font-semibold mb-4">🌍 Live Exchange Rates (USD Base)</h3>
