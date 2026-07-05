@@ -1592,9 +1592,9 @@ function CurrencyPage({
               <XAxis dataKey="date" stroke="#9CA3AF" />
               <YAxis stroke="#9CA3AF" domain={['auto', 'auto']} />
               <Tooltip 
-                contentStyle={{ backgroundColor: '#1F2937', borderColor: '#374151' }} 
-                formatter={(value: number) => value?.toFixed(4) ?? '-'}
-              />
+  contentStyle={{ backgroundColor: '#1F2937', borderColor: '#374151' }} 
+  formatter={(value: any) => value?.toFixed(4) ?? '-'}
+/>
               <Legend />
               {pairs.map((pair, i) => (
                 <Line key={pair} type="monotone" dataKey={pair} stroke={COLORS[i % COLORS.length]} strokeWidth={2} dot={false} />
