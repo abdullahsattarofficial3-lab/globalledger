@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { Toaster, toast } from 'react-hot-toast';
 import { 
   LayoutDashboard, DollarSign, FileText, Users, 
@@ -11,7 +11,9 @@ import {
   AlertCircle, Menu, X, TrendingUp, Sparkles,
   ChevronRight, RefreshCw, Eye, EyeOff, 
   CheckCircle, Crown, Settings, User, Key,
-  Save
+  Save, Globe, Shield, Zap, Star, Award, Rocket,
+  Play, ArrowRight, Twitter, Linkedin, Github, Phone,
+  Code, Layers, Coffee, Download, ExternalLink
 } from 'lucide-react';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, 
@@ -38,6 +40,325 @@ const TAX_RATES: Record<string, { rate: number; description: string }> = {
 const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6', '#8B5CF6'];
 
 // ============================================================
+// LANDING PAGE COMPONENTS
+// ============================================================
+function Navbar({ darkMode, toggleDarkMode, mobileMenuOpen, setMobileMenuOpen, setMode }: any) {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <motion.nav 
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+        scrolled 
+          ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-lg' 
+          : 'bg-transparent'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          <div className="flex items-center gap-2">
+            <motion.div whileHover={{ rotate: 360 }} transition={{ duration: 0.5 }}>
+              <Crown className="text-blue-600 dark:text-blue-400" size={32} />
+            </motion.div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">GlobalLedger</span>
+          </div>
+          <div className="hidden md:flex items-center gap-8">
+            <a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">Features</a>
+            <a href="#pricing" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">Pricing</a>
+            <a href="#testimonials" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium">Testimonials</a>
+            <button onClick={toggleDarkMode} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+              {darkMode ? <Sun size={20} className="text-yellow-400" /> : <Moon size={20} />}
+            </button>
+            <button onClick={() => setMode('signup')} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-lg hover:shadow-xl font-medium">
+              Get Started
+            </button>
+          </div>
+          <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="md:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </div>
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="md:hidden bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+            <div className="px-4 py-4 space-y-3">
+              <a href="#features" className="block text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium py-2">Features</a>
+              <a href="#pricing" className="block text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium py-2">Pricing</a>
+              <a href="#testimonials" className="block text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition font-medium py-2">Testimonials</a>
+              <button onClick={() => setMode('signup')} className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium">Get Started</button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
+  );
+}
+
+function HeroSection({ darkMode, setMode }: any) {
+  return (
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-16">
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900" />
+        <motion.div animate={{ x: [0, 100, 0], y: [0, -100, 0] }} transition={{ duration: 20, repeat: Infinity, ease: "linear" }} className="absolute top-20 left-20 w-64 h-64 bg-blue-400/20 rounded-full blur-3xl" />
+        <motion.div animate={{ x: [0, -100, 0], y: [0, 100, 0] }} transition={{ duration: 25, repeat: Infinity, ease: "linear" }} className="absolute bottom-20 right-20 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5 dark:opacity-10" />
+      </div>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <motion.div initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }}>
+            <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3, type: "spring" }} className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-6">
+              <Sparkles size={16} className="text-blue-600 dark:text-blue-400" />
+              <span className="text-sm font-medium text-blue-600 dark:text-blue-400">🚀 For Freelancers Worldwide</span>
+            </motion.div>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 dark:text-white leading-tight">
+              Finance Tools Built For{' '}
+              <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Global Freelancers</span>
+            </h1>
+            <p className="mt-6 text-xl text-gray-600 dark:text-gray-300 max-w-lg">Track earnings in any currency, create professional invoices, estimate taxes, and manage clients – all in one place.</p>
+            <div className="mt-8 flex flex-col sm:flex-row gap-4">
+              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setMode('signup')} className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:shadow-2xl transition shadow-lg font-semibold text-lg flex items-center justify-center gap-2">
+                Start Free Trial <Sparkles size={20} />
+              </motion.button>
+              <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition font-semibold text-lg flex items-center justify-center gap-2">
+                <Play size={20} /> Watch Demo
+              </motion.button>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-6 text-sm text-gray-500 dark:text-gray-400">
+              <span className="flex items-center gap-2"><CheckCircle size={16} className="text-green-500" /> No credit card</span>
+              <span className="flex items-center gap-2"><CheckCircle size={16} className="text-green-500" /> Free forever</span>
+              <span className="flex items-center gap-2"><CheckCircle size={16} className="text-green-500" /> Multi-currency</span>
+            </div>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8, delay: 0.2 }} className="relative">
+            <motion.div animate={{ y: [0, -20, 0], rotate: [0, 2, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="relative">
+              <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-gray-200 dark:border-gray-700">
+                <motion.div animate={{ x: [0, 20, 0], y: [0, -20, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="absolute -top-6 -right-6 w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl shadow-lg flex items-center justify-center">
+                  <DollarSign className="text-white" size={32} />
+                </motion.div>
+                <motion.div animate={{ x: [0, -20, 0], y: [0, 20, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-6 -left-6 w-16 h-16 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl shadow-lg flex items-center justify-center">
+                  <TrendingUp className="text-white" size={32} />
+                </motion.div>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center"><FileText className="text-blue-600" size={24} /></div>
+                    <div><p className="text-sm text-gray-500 dark:text-gray-400">Invoice #INV-001</p><p className="font-semibold text-gray-900 dark:text-white">$2,450.00</p></div>
+                    <span className="ml-auto px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded-full text-xs font-medium">Paid</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center"><Users className="text-purple-600" size={24} /></div>
+                    <div><p className="text-sm text-gray-500 dark:text-gray-400">New Client</p><p className="font-semibold text-gray-900 dark:text-white">Sarah Johnson</p></div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center"><BarChart3 className="text-orange-600" size={24} /></div>
+                    <div><p className="text-sm text-gray-500 dark:text-gray-400">Earnings This Month</p><p className="font-semibold text-gray-900 dark:text-white">$8,450.00</p></div>
+                  </div>
+                </div>
+              </div>
+              <motion.div animate={{ x: [0, 30, 0], y: [0, -30, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }} className="absolute -top-12 -right-12 bg-white dark:bg-gray-800 shadow-xl rounded-full px-6 py-3 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2"><div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" /><span className="font-medium text-sm">2.3k+ Users</span></div>
+              </motion.div>
+              <motion.div animate={{ x: [0, -30, 0], y: [0, 30, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }} className="absolute -bottom-12 -left-12 bg-white dark:bg-gray-800 shadow-xl rounded-full px-6 py-3 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center gap-2"><Star className="text-yellow-500" size={18} /><span className="font-medium text-sm">4.9/5 Rating</span></div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+        </div>
+        <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }} className="absolute bottom-8 left-1/2 -translate-x-1/2">
+          <div className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center"><div className="w-1.5 h-3 bg-blue-600 rounded-full mt-2 animate-bounce" /></div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function StatsSection() {
+  const [counts, setCounts] = useState({ users: 0, earnings: 0, countries: 0, satisfaction: 0 });
+  useEffect(() => { const timer = setTimeout(() => setCounts({ users: 2300, earnings: 50000000, countries: 120, satisfaction: 99 }), 500); return () => clearTimeout(timer); }, []);
+  const stats = [
+    { label: 'Active Users', value: counts.users, suffix: '+', icon: Users },
+    { label: 'Total Earnings Tracked', value: `$${(counts.earnings / 1000000).toFixed(1)}M`, suffix: '', icon: TrendingUp },
+    { label: 'Countries Served', value: counts.countries, suffix: '+', icon: Globe },
+    { label: 'User Satisfaction', value: counts.satisfaction, suffix: '%', icon: Award },
+  ];
+  return (
+    <section className="py-16 bg-gradient-to-r from-blue-600 to-indigo-600">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          {stats.map((stat, i) => (
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} className="text-center text-white">
+              <stat.icon className="mx-auto mb-3" size={32} />
+              <p className="text-3xl md:text-4xl font-bold">{typeof stat.value === 'number' ? stat.value.toLocaleString() : stat.value}{stat.suffix}</p>
+              <p className="text-sm text-blue-100 mt-1">{stat.label}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FeaturesSection() {
+  const features = [
+    { icon: DollarSign, title: 'Multi-Currency Tracking', desc: 'Track earnings in USD, EUR, GBP, PKR, INR, and more.', color: 'blue' },
+    { icon: FileText, title: 'Professional Invoices', desc: 'Create beautiful PDF invoices with your logo and auto-numbering.', color: 'green' },
+    { icon: Users, title: 'Client Management', desc: 'Store client details and see all invoices linked to each client.', color: 'purple' },
+    { icon: Calculator, title: 'Tax Estimator', desc: 'Estimate taxes for your country with clear disclaimers.', color: 'orange' },
+    { icon: BarChart3, title: 'Currency Tracker', desc: 'Track currency conversion rates with live charts.', color: 'pink' },
+    { icon: Shield, title: 'Secure & Private', desc: 'Your data is encrypted and protected with Row Level Security.', color: 'indigo' },
+  ];
+  const colorMap: any = { blue: 'from-blue-500 to-blue-600', green: 'from-green-500 to-emerald-600', purple: 'from-purple-500 to-purple-600', orange: 'from-orange-500 to-orange-600', pink: 'from-pink-500 to-rose-600', indigo: 'from-indigo-500 to-indigo-600' };
+  return (
+    <section id="features" className="py-20 bg-gray-50 dark:bg-gray-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Everything You Need To Succeed</h2>
+          <p className="mt-4 text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">Powerful tools designed specifically for freelancers working globally</p>
+        </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {features.map((feature, i) => (
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} whileHover={{ y: -8 }} className="group relative bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-gray-200 dark:border-gray-700">
+              <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${colorMap[feature.color]} rounded-t-2xl`} />
+              <div className={`inline-flex p-3 bg-gradient-to-r ${colorMap[feature.color]} rounded-xl text-white shadow-lg`}><feature.icon size={24} /></div>
+              <h3 className="mt-4 text-xl font-semibold text-gray-900 dark:text-white">{feature.title}</h3>
+              <p className="mt-2 text-gray-600 dark:text-gray-400">{feature.desc}</p>
+              <div className="mt-4 opacity-0 group-hover:opacity-100 transition"><span className="text-blue-600 dark:text-blue-400 font-medium flex items-center gap-1">Learn More <ArrowRight size={16} /></span></div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HowItWorks() {
+  const steps = [
+    { number: '01', title: 'Sign Up Free', desc: 'Create your account in 30 seconds – no credit card required.' },
+    { number: '02', title: 'Track Earnings', desc: 'Add earnings in any currency and watch them auto-convert.' },
+    { number: '03', title: 'Create Invoices', desc: 'Generate professional PDF invoices with one click.' },
+    { number: '04', title: 'Manage Clients', desc: 'Organize clients, track history, and grow your business.' },
+  ];
+  return (
+    <section className="py-20 bg-white dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">How It Works</h2>
+          <p className="mt-4 text-xl text-gray-600 dark:text-gray-300">Get started in 4 simple steps</p>
+        </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {steps.map((step, i) => (
+            <motion.div key={i} initial={{ opacity: 0, scale: 0.8 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ delay: i * 0.1 }} className="text-center">
+              <div className="relative inline-block">
+                <div className="w-20 h-20 mx-auto bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold shadow-lg">{step.number}</div>
+                {i < steps.length - 1 && <div className="hidden lg:block absolute top-1/2 left-full w-full h-0.5 bg-gradient-to-r from-blue-600 to-indigo-600/30 -translate-y-1/2" />}
+              </div>
+              <h3 className="mt-4 text-xl font-semibold text-gray-900 dark:text-white">{step.title}</h3>
+              <p className="mt-2 text-gray-600 dark:text-gray-400">{step.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PricingSection() {
+  const plans = [
+    { name: 'Starter', price: '$0', description: 'Perfect for getting started', features: ['Multi-currency earnings', 'Basic invoicing', 'Client management', 'Tax estimator', 'Currency tracker', 'Up to 5 invoices/month'], popular: false, buttonText: 'Get Started', buttonColor: 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white' },
+    { name: 'Pro', price: '$5', description: 'For serious freelancers', features: ['All Starter features', 'Unlimited invoices', 'Custom branding', 'Advanced analytics', 'Priority support', 'Export to CSV'], popular: true, buttonText: 'Start Free Trial', buttonColor: 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white' },
+  ];
+  return (
+    <section id="pricing" className="py-20 bg-gray-50 dark:bg-gray-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Simple, Transparent Pricing</h2>
+          <p className="mt-4 text-xl text-gray-600 dark:text-gray-300">Choose the plan that fits your needs</p>
+        </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          {plans.map((plan, i) => (
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} whileHover={{ y: -8 }} className={`relative bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg transition-all duration-300 ${plan.popular ? 'ring-2 ring-blue-600 dark:ring-blue-400 shadow-xl' : 'border border-gray-200 dark:border-gray-700'}`}>
+              {plan.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-semibold rounded-full">Most Popular</div>}
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{plan.name}</h3>
+              <div className="mt-4 flex items-baseline"><span className="text-4xl font-extrabold text-gray-900 dark:text-white">{plan.price}</span>{plan.price !== '$0' && <span className="ml-1 text-gray-500 dark:text-gray-400">/month</span>}</div>
+              <p className="mt-2 text-gray-600 dark:text-gray-400">{plan.description}</p>
+              <ul className="mt-6 space-y-3">{plan.features.map((feature, j) => (<li key={j} className="flex items-start gap-2 text-gray-600 dark:text-gray-300"><CheckCircle size={18} className="text-green-500 flex-shrink-0 mt-0.5" /><span>{feature}</span></li>))}</ul>
+              <button className={`mt-8 w-full px-6 py-3 rounded-lg font-semibold transition hover:shadow-lg ${plan.buttonColor}`}>{plan.buttonText}</button>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TestimonialsSection() {
+  const testimonials = [
+    { name: 'Sarah Johnson', role: 'Freelance Designer', image: 'https://ui-avatars.com/api/?name=Sarah+Johnson&background=3B82F6&color=fff&size=64', quote: 'GlobalLedger has completely transformed how I manage my freelance income.', rating: 5 },
+    { name: 'Ahmed Khan', role: 'Software Developer', image: 'https://ui-avatars.com/api/?name=Ahmed+Khan&background=10B981&color=fff&size=64', quote: 'The invoice generator is incredibly professional. My clients love the clean PDF invoices.', rating: 5 },
+    { name: 'Maria Santos', role: 'Digital Marketer', image: 'https://ui-avatars.com/api/?name=Maria+Santos&background=8B5CF6&color=fff&size=64', quote: 'I\'ve tried other tools, but GlobalLedger is the only one that truly understands freelancers\' needs.', rating: 5 },
+  ];
+  return (
+    <section id="testimonials" className="py-20 bg-white dark:bg-gray-900">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">Loved by Freelancers Worldwide</h2>
+          <p className="mt-4 text-xl text-gray-600 dark:text-gray-300">Hear what our users have to say</p>
+        </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {testimonials.map((t, i) => (
+            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }} whileHover={{ y: -8 }} className="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-4"><img src={t.image} alt={t.name} className="w-12 h-12 rounded-full" /><div><p className="font-semibold text-gray-900 dark:text-white">{t.name}</p><p className="text-sm text-gray-500 dark:text-gray-400">{t.role}</p></div></div>
+              <div className="mt-4 flex gap-1">{[...Array(5)].map((_, j) => (<Star key={j} size={16} className="fill-yellow-400 text-yellow-400" />))}</div>
+              <p className="mt-3 text-gray-600 dark:text-gray-300 italic">"{t.quote}"</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CTASection({ setMode }: any) {
+  return (
+    <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-600">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} className="text-white">
+          <h2 className="text-3xl md:text-5xl font-bold">Ready To Take Control Of Your Finances?</h2>
+          <p className="mt-4 text-xl text-blue-100 max-w-2xl mx-auto">Join thousands of freelancers already using GlobalLedger to manage their income.</p>
+          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setMode('signup')} className="px-8 py-4 bg-white text-blue-600 rounded-xl hover:shadow-2xl transition shadow-lg font-semibold text-lg flex items-center justify-center gap-2">Start Free Trial <Rocket size={20} /></motion.button>
+            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="px-8 py-4 border-2 border-white/30 text-white rounded-xl hover:bg-white/10 transition font-semibold text-lg flex items-center justify-center gap-2">Schedule Demo <Phone size={20} /></motion.button>
+          </div>
+          <p className="mt-6 text-sm text-blue-200">No credit card required • Free forever • 30-day money-back guarantee</p>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="bg-gray-900 dark:bg-gray-950 text-gray-400 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="col-span-1 md:col-span-2"><div className="flex items-center gap-2"><Crown className="text-blue-500" size={28} /><span className="text-xl font-bold text-white">GlobalLedger</span></div><p className="mt-4 max-w-sm">Finance tools built for freelancers working globally. Track earnings, create invoices, and manage clients – all in one place.</p><div className="mt-6 flex gap-4"><a href="#" className="hover:text-white transition"><Twitter size={20} /></a><a href="#" className="hover:text-white transition"><Linkedin size={20} /></a><a href="#" className="hover:text-white transition"><Github size={20} /></a><a href="#" className="hover:text-white transition"><Mail size={20} /></a></div></div>
+          <div><h3 className="text-white font-semibold mb-4">Product</h3><ul className="space-y-2"><li><a href="#features" className="hover:text-white transition">Features</a></li><li><a href="#pricing" className="hover:text-white transition">Pricing</a></li><li><a href="#" className="hover:text-white transition">Changelog</a></li><li><a href="#" className="hover:text-white transition">Roadmap</a></li></ul></div>
+          <div><h3 className="text-white font-semibold mb-4">Company</h3><ul className="space-y-2"><li><a href="#" className="hover:text-white transition">About</a></li><li><a href="#" className="hover:text-white transition">Blog</a></li><li><a href="#" className="hover:text-white transition">Careers</a></li><li><a href="#" className="hover:text-white transition">Contact</a></li></ul></div>
+        </div>
+        <div className="mt-12 pt-8 border-t border-gray-800 text-center text-sm"><p>© 2026 GlobalLedger. All rights reserved. Built for freelancers worldwide.</p></div>
+      </div>
+    </footer>
+  );
+}
+
+// ============================================================
 // MAIN COMPONENT
 // ============================================================
 export default function Home() {
@@ -55,6 +376,7 @@ export default function Home() {
   const [mode, setMode] = useState<'landing' | 'login' | 'signup' | 'onboarding' | 'dashboard'>('landing');
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   // ===== TAB STATE =====
   const [view, setView] = useState<'overview' | 'earnings' | 'invoices' | 'clients' | 'tax' | 'currency' | 'settings'>('overview');
@@ -111,7 +433,7 @@ export default function Home() {
   const [settingsLoading, setSettingsLoading] = useState(false);
 
   // ============================================================
-  // DARK MODE - FIXED WITH localStorage
+  // DARK MODE
   // ============================================================
   useEffect(() => {
     const saved = localStorage.getItem('darkMode');
@@ -741,96 +1063,23 @@ export default function Home() {
   // ============================================================
   if (mode === 'landing') {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-900">
+      <div className="min-h-screen bg-white dark:bg-gray-900 overflow-x-hidden">
         <Toaster position="top-right" />
-        <nav className="fixed top-0 w-full z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-            <div className="flex items-center gap-2">
-              <Crown className="text-blue-600" size={28} />
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">GlobalLedger</h1>
-            </div>
-            <div className="flex items-center gap-4">
-              <button 
-                onClick={toggleDarkMode}
-                className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                aria-label="Toggle dark mode"
-              >
-                {darkMode ? <Sun size={20} className="text-yellow-400" /> : <Moon size={20} />}
-              </button>
-              <button onClick={() => setMode('login')} className="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">Sign In</button>
-              <button onClick={() => setMode('signup')} className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition shadow-md font-medium">Get Started</button>
-            </div>
-          </div>
-        </nav>
-        <main className="pt-16">
-          <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-900 py-20">
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute top-10 left-10 w-64 h-64 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-              <div className="absolute bottom-10 right-10 w-96 h-96 bg-indigo-400 rounded-full mix-blend-multiply filter blur-3xl animate-pulse delay-1000"></div>
-            </div>
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-              <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.5 }} className="text-center max-w-4xl mx-auto">
-                <span className="inline-block px-4 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium mb-6">🚀 For Freelancers Worldwide</span>
-                <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 dark:text-white leading-tight">
-                  Finance Tools Built For{' '}
-                  <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Global Freelancers</span>
-                </h1>
-                <p className="mt-6 text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                  Track earnings in any currency, create professional invoices, estimate taxes, and manage clients – all in one place.
-                </p>
-                <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                  <button onClick={() => setMode('signup')} className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:shadow-xl transition shadow-lg font-semibold text-lg flex items-center justify-center gap-2">
-                    Start Free Trial <Sparkles size={20} />
-                  </button>
-                  <button className="px-8 py-4 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-800 transition font-semibold text-lg">Watch Demo</button>
-                </div>
-                <div className="mt-6 flex flex-wrap justify-center gap-6 text-sm text-gray-500 dark:text-gray-400">
-                  <span className="flex items-center gap-1"><CheckCircle size={16} className="text-green-500" /> No credit card</span>
-                  <span className="flex items-center gap-1"><CheckCircle size={16} className="text-green-500" /> Free forever</span>
-                  <span className="flex items-center gap-1"><CheckCircle size={16} className="text-green-500" /> Multi-currency</span>
-                </div>
-              </motion.div>
-            </div>
-          </section>
-          <section className="py-20 bg-white dark:bg-gray-900">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 dark:text-white mb-12">Everything You Need</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {[
-                  { icon: '💰', title: 'Multi-Currency Tracking', desc: 'Track earnings in USD, EUR, GBP, PKR, INR, and more. Auto-convert to your default currency.', color: 'bg-blue-50 dark:bg-blue-900/20' },
-                  { icon: '📄', title: 'Professional Invoices', desc: 'Create beautiful PDF invoices with your logo, auto-numbering, and payment status tracking.', color: 'bg-green-50 dark:bg-green-900/20' },
-                  { icon: '📊', title: 'Tax & Currency Tools', desc: 'Estimate taxes for your country and track currency conversion rates with live charts.', color: 'bg-purple-50 dark:bg-purple-900/20' },
-                ].map((f, i) => (
-                  <motion.div key={i} initial={{ y: 20, opacity: 0 }} whileInView={{ y: 0, opacity: 1 }} transition={{ delay: i*0.1 }} className={`${f.color} p-8 rounded-2xl shadow-sm hover:shadow-lg transition border border-gray-200 dark:border-gray-700`}>
-                    <div className="text-4xl mb-4">{f.icon}</div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">{f.title}</h3>
-                    <p className="mt-2 text-gray-600 dark:text-gray-400">{f.desc}</p>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-          </section>
-          <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-600 text-white">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
-              <div className="max-w-md mx-auto bg-white/10 backdrop-blur-sm p-8 rounded-2xl border border-white/20">
-                <div className="flex justify-center mb-4"><Crown size={48} className="text-yellow-300" /></div>
-                <h3 className="text-2xl font-bold">Freelancer Pro</h3>
-                <div className="text-5xl font-bold my-4">$5</div>
-                <p className="text-blue-100 mb-6">per month</p>
-                <ul className="text-left space-y-2 mb-6">
-                  {['Multi-currency earnings', 'Professional invoices', 'Client management', 'Tax estimator', 'Currency tracker'].map((item, i) => (
-                    <li key={i} className="flex items-center gap-2"><span className="text-green-400">✅</span> {item}</li>
-                  ))}
-                </ul>
-                <button onClick={() => setMode('signup')} className="w-full bg-white text-blue-600 px-6 py-3 rounded-lg font-bold hover:bg-blue-50 transition shadow-lg">Start Free Trial</button>
-              </div>
-            </div>
-          </section>
-          <footer className="py-6 bg-gray-900 text-gray-400 text-center text-sm border-t border-gray-800">
-            <p>© 2026 GlobalLedger. Built for freelancers worldwide.</p>
-          </footer>
-        </main>
+        <Navbar 
+          darkMode={darkMode} 
+          toggleDarkMode={toggleDarkMode}
+          mobileMenuOpen={mobileMenuOpen}
+          setMobileMenuOpen={setMobileMenuOpen}
+          setMode={setMode}
+        />
+        <HeroSection darkMode={darkMode} setMode={setMode} />
+        <StatsSection />
+        <FeaturesSection />
+        <HowItWorks />
+        <PricingSection />
+        <TestimonialsSection />
+        <CTASection setMode={setMode} />
+        <Footer />
       </div>
     );
   }
@@ -1095,7 +1344,6 @@ function SettingsPage({ settingsForm, setSettingsForm, passwordForm, setPassword
         <Settings size={24} /> Account Settings
       </h2>
 
-      {/* Profile Form */}
       <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
           <User size={20} /> Profile Information
@@ -1104,31 +1352,15 @@ function SettingsPage({ settingsForm, setSettingsForm, passwordForm, setPassword
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
-              <input
-                type="text"
-                value={settingsForm.full_name}
-                onChange={(e) => setSettingsForm({...settingsForm, full_name: e.target.value})}
-                className="mt-1 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                required
-              />
+              <input type="text" value={settingsForm.full_name} onChange={(e) => setSettingsForm({...settingsForm, full_name: e.target.value})} className="mt-1 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500" required />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Business Name</label>
-              <input
-                type="text"
-                value={settingsForm.business_name}
-                onChange={(e) => setSettingsForm({...settingsForm, business_name: e.target.value})}
-                className="mt-1 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-              />
+              <input type="text" value={settingsForm.business_name} onChange={(e) => setSettingsForm({...settingsForm, business_name: e.target.value})} className="mt-1 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500" />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Country</label>
-              <select
-                value={settingsForm.country}
-                onChange={(e) => setSettingsForm({...settingsForm, country: e.target.value})}
-                className="mt-1 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                required
-              >
+              <select value={settingsForm.country} onChange={(e) => setSettingsForm({...settingsForm, country: e.target.value})} className="mt-1 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500" required>
                 <option value="">Select Country</option>
                 <option value="Pakistan">Pakistan</option><option value="India">India</option>
                 <option value="Bangladesh">Bangladesh</option><option value="Philippines">Philippines</option>
@@ -1138,29 +1370,19 @@ function SettingsPage({ settingsForm, setSettingsForm, passwordForm, setPassword
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Default Currency</label>
-              <select
-                value={settingsForm.default_currency}
-                onChange={(e) => setSettingsForm({...settingsForm, default_currency: e.target.value})}
-                className="mt-1 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                required
-              >
+              <select value={settingsForm.default_currency} onChange={(e) => setSettingsForm({...settingsForm, default_currency: e.target.value})} className="mt-1 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500" required>
                 <option value="USD">USD ($)</option><option value="EUR">EUR (€)</option>
                 <option value="GBP">GBP (£)</option><option value="PKR">PKR (Rs)</option>
                 <option value="INR">INR (₹)</option><option value="PHP">PHP (₱)</option><option value="NGN">NGN (₦)</option>
               </select>
             </div>
           </div>
-          <button
-            type="submit"
-            disabled={settingsLoading}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 flex items-center gap-2"
-          >
+          <button type="submit" disabled={settingsLoading} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 flex items-center gap-2">
             <Save size={18} /> {settingsLoading ? 'Saving...' : 'Update Profile'}
           </button>
         </form>
       </div>
 
-      {/* Password Change */}
       <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
           <Key size={20} /> Change Password
@@ -1169,41 +1391,18 @@ function SettingsPage({ settingsForm, setSettingsForm, passwordForm, setPassword
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Current Password</label>
-              <input
-                type="password"
-                value={passwordForm.current_password}
-                onChange={(e) => setPasswordForm({...passwordForm, current_password: e.target.value})}
-                className="mt-1 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                required
-              />
+              <input type="password" value={passwordForm.current_password} onChange={(e) => setPasswordForm({...passwordForm, current_password: e.target.value})} className="mt-1 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500" required />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">New Password</label>
-              <input
-                type="password"
-                value={passwordForm.new_password}
-                onChange={(e) => setPasswordForm({...passwordForm, new_password: e.target.value})}
-                className="mt-1 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                required
-                minLength={6}
-              />
+              <input type="password" value={passwordForm.new_password} onChange={(e) => setPasswordForm({...passwordForm, new_password: e.target.value})} className="mt-1 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500" required minLength={6} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirm New Password</label>
-              <input
-                type="password"
-                value={passwordForm.confirm_password}
-                onChange={(e) => setPasswordForm({...passwordForm, confirm_password: e.target.value})}
-                className="mt-1 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                required
-              />
+              <input type="password" value={passwordForm.confirm_password} onChange={(e) => setPasswordForm({...passwordForm, confirm_password: e.target.value})} className="mt-1 w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500" required />
             </div>
           </div>
-          <button
-            type="submit"
-            disabled={settingsLoading}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 flex items-center gap-2"
-          >
+          <button type="submit" disabled={settingsLoading} className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 flex items-center gap-2">
             <Key size={18} /> {settingsLoading ? 'Updating...' : 'Change Password'}
           </button>
         </form>
@@ -1495,11 +1694,7 @@ function TaxPage({ taxCountry, setTaxCountry, annualIncome, setAnnualIncome, tax
           <AlertCircle size={20} className="text-yellow-600 dark:text-yellow-500 flex-shrink-0 mt-0.5" />
           <div>
             <p className="text-sm font-medium text-yellow-800 dark:text-yellow-400">⚠️ Important Legal Notice</p>
-            <p className="text-sm text-yellow-700 dark:text-yellow-500">
-              This is a <strong>rough estimate for planning purposes only</strong>. 
-              Tax laws vary significantly and change frequently. 
-              <strong> Please consult a licensed tax professional in your country for accurate filing.</strong>
-            </p>
+            <p className="text-sm text-yellow-700 dark:text-yellow-500">This is a <strong>rough estimate for planning purposes only</strong>. Tax laws vary significantly and change frequently. <strong> Please consult a licensed tax professional in your country for accurate filing.</strong></p>
           </div>
         </div>
       </div>
@@ -1528,7 +1723,7 @@ function TaxPage({ taxCountry, setTaxCountry, annualIncome, setAnnualIncome, tax
 }
 
 // ============================================================
-// CURRENCY PAGE - COMPLETE FIXED
+// CURRENCY PAGE
 // ============================================================
 function CurrencyPage({ 
   currencyLogs, showCurrencyForm, setShowCurrencyForm, newCurrencyLog, 
@@ -1557,7 +1752,6 @@ function CurrencyPage({
         </div>
       </div>
 
-      {/* Live Rate Cards */}
       {Object.keys(exchangeRates).length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {['PKR', 'EUR', 'GBP', 'INR'].map((curr) => {
@@ -1579,7 +1773,6 @@ function CurrencyPage({
         </div>
       )}
 
-      {/* Multi-Currency Chart */}
       {multiCurrencyData.length > 1 && (
         <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center mb-4">
@@ -1611,7 +1804,6 @@ function CurrencyPage({
         </div>
       )}
 
-      {/* Stats */}
       {currencyLogs.length > 0 && (
         <div className="grid grid-cols-3 gap-4">
           <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
@@ -1629,7 +1821,6 @@ function CurrencyPage({
         </div>
       )}
 
-      {/* Form */}
       <AnimatePresence>
         {showCurrencyForm && (
           <motion.div 
@@ -1639,70 +1830,26 @@ function CurrencyPage({
             className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
           >
             <form onSubmit={addCurrencyLog} className="grid grid-cols-1 md:grid-cols-5 gap-3">
-              <input 
-                type="number" 
-                step="0.01" 
-                placeholder="Amount" 
-                value={newCurrencyLog.amount} 
-                onChange={(e) => setNewCurrencyLog({...newCurrencyLog, amount: e.target.value})} 
-                className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700" 
-                required 
-              />
-              <select 
-                value={newCurrencyLog.from_currency} 
-                onChange={(e) => setNewCurrencyLog({...newCurrencyLog, from_currency: e.target.value})} 
-                className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700"
-              >
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="GBP">GBP</option>
-                <option value="PKR">PKR</option>
-                <option value="INR">INR</option>
-                <option value="PHP">PHP</option>
-                <option value="NGN">NGN</option>
+              <input type="number" step="0.01" placeholder="Amount" value={newCurrencyLog.amount} onChange={(e) => setNewCurrencyLog({...newCurrencyLog, amount: e.target.value})} className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700" required />
+              <select value={newCurrencyLog.from_currency} onChange={(e) => setNewCurrencyLog({...newCurrencyLog, from_currency: e.target.value})} className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700">
+                <option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option>
+                <option value="PKR">PKR</option><option value="INR">INR</option><option value="PHP">PHP</option><option value="NGN">NGN</option>
               </select>
-              <select 
-                value={newCurrencyLog.to_currency} 
-                onChange={(e) => setNewCurrencyLog({...newCurrencyLog, to_currency: e.target.value})} 
-                className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700"
-              >
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="GBP">GBP</option>
-                <option value="PKR">PKR</option>
-                <option value="INR">INR</option>
-                <option value="PHP">PHP</option>
-                <option value="NGN">NGN</option>
+              <select value={newCurrencyLog.to_currency} onChange={(e) => setNewCurrencyLog({...newCurrencyLog, to_currency: e.target.value})} className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700">
+                <option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option>
+                <option value="PKR">PKR</option><option value="INR">INR</option><option value="PHP">PHP</option><option value="NGN">NGN</option>
               </select>
-              <input 
-                type="number" 
-                step="0.000001" 
-                placeholder="Rate" 
-                value={newCurrencyLog.rate} 
-                onChange={(e) => setNewCurrencyLog({...newCurrencyLog, rate: e.target.value})} 
-                className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700" 
-                required 
-              />
-              <input 
-                type="date" 
-                value={newCurrencyLog.date} 
-                onChange={(e) => setNewCurrencyLog({...newCurrencyLog, date: e.target.value})} 
-                className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700" 
-              />
+              <input type="number" step="0.000001" placeholder="Rate" value={newCurrencyLog.rate} onChange={(e) => setNewCurrencyLog({...newCurrencyLog, rate: e.target.value})} className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700" required />
+              <input type="date" value={newCurrencyLog.date} onChange={(e) => setNewCurrencyLog({...newCurrencyLog, date: e.target.value})} className="p-3 border rounded-lg dark:bg-gray-900 dark:border-gray-700" />
               <div className="md:col-span-5 flex gap-3">
-                <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                  Save
-                </button>
-                <button type="button" onClick={() => setShowCurrencyForm(false)} className="px-6 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300">
-                  Cancel
-                </button>
+                <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save</button>
+                <button type="button" onClick={() => setShowCurrencyForm(false)} className="px-6 py-2 bg-gray-200 dark:bg-gray-700 rounded-lg hover:bg-gray-300">Cancel</button>
               </div>
             </form>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Table */}
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
           <h3 className="font-semibold">📋 Historical Logs</h3>
@@ -1714,30 +1861,16 @@ function CurrencyPage({
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="bg-gray-50 dark:bg-gray-700">
-                <tr>
-                  <th className="p-4 text-left">Date</th>
-                  <th className="p-4 text-right">Amount</th>
-                  <th className="p-4 text-center">From → To</th>
-                  <th className="p-4 text-right">Rate</th>
-                  <th className="p-4 text-center">Action</th>
-                </tr>
+                <tr><th className="p-4 text-left">Date</th><th className="p-4 text-right">Amount</th><th className="p-4 text-center">From → To</th><th className="p-4 text-right">Rate</th><th className="p-4 text-center">Action</th></tr>
               </thead>
               <tbody>
                 {currencyLogs.slice(0, 50).map((log: any) => (
                   <tr key={log.id} className="border-t dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
                     <td className="p-4">{log.date}</td>
                     <td className="p-4 text-right font-medium">{Number(log.amount).toFixed(2)}</td>
-                    <td className="p-4 text-center">
-                      <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full text-xs">
-                        {log.from_currency} → {log.to_currency}
-                      </span>
-                    </td>
+                    <td className="p-4 text-center"><span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full text-xs">{log.from_currency} → {log.to_currency}</span></td>
                     <td className="p-4 text-right font-mono">{Number(log.rate).toFixed(4)}</td>
-                    <td className="p-4 text-center">
-                      <button onClick={() => deleteCurrencyLog(log.id)} className="text-red-600 hover:bg-red-50 p-1 rounded">
-                        <Trash2 size={16} />
-                      </button>
-                    </td>
+                    <td className="p-4 text-center"><button onClick={() => deleteCurrencyLog(log.id)} className="text-red-600 hover:bg-red-50 p-1 rounded"><Trash2 size={16} /></button></td>
                   </tr>
                 ))}
               </tbody>
@@ -1746,7 +1879,6 @@ function CurrencyPage({
         )}
       </div>
 
-      {/* Live Rates */}
       {Object.keys(exchangeRates).length > 0 && (
         <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
           <h3 className="font-semibold mb-4">🌍 Live Exchange Rates (USD Base)</h3>
