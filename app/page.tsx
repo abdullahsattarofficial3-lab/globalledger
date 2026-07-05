@@ -1591,7 +1591,7 @@ function CurrencyPage({
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis dataKey="date" stroke="#9CA3AF" />
               <YAxis stroke="#9CA3AF" domain={['auto', 'auto']} />
-              <Tooltip 
+<Tooltip 
   contentStyle={{ backgroundColor: '#1F2937', borderColor: '#374151' }} 
   formatter={(value: any) => value?.toFixed(4) ?? '-'}
 />
