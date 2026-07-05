@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================
+   CSS VARIABLES FOR THEMING
+   ============================================================ */
+@layer base {
+  :root {
+    --background: 255, 255, 255;
+    --foreground: 17, 24, 39;
+    --card: 255, 255, 255;
+    --card-foreground: 17, 24, 39;
+    --border: 229, 231, 235;
+    --input: 229, 231, 235;
+    --ring: 59, 130, 246;
+  }
+
+  .dark {
+    --background: 17, 24, 39;
+    --foreground: 243, 244, 246;
+    --card: 31, 41, 55;
+    --card-foreground: 243, 244, 246;
+    --border: 55, 65, 81;
+    --input: 55, 65, 81;
+    --ring: 59, 130, 246;
+  }
+}
+
+/* ============================================================
+   BASE STYLES
+   ============================================================ */
+html {
+  /* Smooth transitions for theme switching */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body {
+  @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-white;
+  font-feature-settings: "rlig" 1, "calt" 1;
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* ============================================================
+   SCROLLBAR STYLING (Professional)
+   ============================================================ */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 dark:bg-gray-800;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-600;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* ============================================================
+   SELECTION STYLES
+   ============================================================ */
+::selection {
+  @apply bg-blue-500/30 text-blue-900 dark:text-blue-100;
+}
+
+/* ============================================================
+   FOCUS STYLES (Accessibility)
+   ============================================================ */
+*:focus-visible {
+  @apply outline-none ring-2 ring-blue-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-900;
+}
+
+/* ============================================================
+   TRANSITION UTILITIES
+   ============================================================ */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* ============================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   PROSE STYLES (For content areas)
+   ============================================================ */
+.prose {
+  @apply text-gray-800 dark:text-gray-200;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  @apply text-gray-900 dark:text-white font-semibold;
+}
+
+.prose a {
+  @apply text-blue-600 dark:text-blue-400 hover:underline;
+}
+
+.prose code {
+  @apply bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded text-sm;
+}
+
+/* ============================================================
+   CUSTOM UTILITY CLASSES
+   ============================================================ */
+@layer utilities {
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
