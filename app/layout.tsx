@@ -23,7 +23,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://globalledger.com'),
+  metadataBase: new URL('https://www.greenbaskiteltd.shop'),
   title: {
     default: 'GlobalLedger – Finance Tools for Freelancers',
     template: '%s | GlobalLedger',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     'freelancer earnings',
     'currency converter',
   ],
-  authors: [{ name: 'GlobalLedger Team', url: 'https://globalledger.com' }],
+  authors: [{ name: 'GlobalLedger Team', url: 'https://www.greenbaskiteltd.shop' }],
   creator: 'GlobalLedger',
   publisher: 'GlobalLedger',
   robots: {
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'GlobalLedger – Finance Tools for Freelancers',
     description: 'Track earnings, create invoices, estimate taxes – all in one platform.',
-    url: process.env.NEXT_PUBLIC_APP_URL || 'https://globalledger.com',
+    url: 'https://www.greenbaskiteltd.shop',
     siteName: 'GlobalLedger',
     images: [
       {
@@ -79,7 +79,7 @@ export const metadata: Metadata = {
     creator: '@GlobalLedger',
   },
   alternates: {
-    canonical: process.env.NEXT_PUBLIC_APP_URL || 'https://globalledger.com',
+    canonical: 'https://www.greenbaskiteltd.shop',
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION || '',
@@ -97,7 +97,7 @@ function JsonLd() {
     '@type': 'WebApplication',
     name: 'GlobalLedger',
     description: 'Multi-currency earnings tracking, professional invoices, tax estimator, and client management for freelancers worldwide.',
-    url: process.env.NEXT_PUBLIC_APP_URL || 'https://globalledger.com',
+    url: 'https://www.greenbaskiteltd.shop',
     applicationCategory: 'FinanceApplication',
     operatingSystem: 'All',
     offers: {
@@ -148,7 +148,7 @@ export default function RootLayout({
         <JsonLd />
       </head>
       <body 
-        className={`${inter.className} antialiased bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300`}
+        className={`${inter.className} antialiased bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300`}
       >
         {children}
       </body>
